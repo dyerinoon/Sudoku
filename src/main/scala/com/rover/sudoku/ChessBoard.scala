@@ -8,20 +8,26 @@ import org.apache.log4j._
  */
 class ChessBoard {
 
-  val LOG = org.apache.log4j.Logger.getLogger("ChessBoard")
+  private val LOG = org.apache.log4j.Logger.getLogger("ChessBoard")
 
-  private val board = new ArrayBuffer[Checker](Constant.BOARD_SIZE * Constant.BOARD_SIZE)
-  for (i <- 0 until board.length) {
-    board(i) = new Checker(Constant.NONE_VALUE, i)
-  }
+  private val board = new Array[Checker](Constant.BOARD_SIZE * Constant.BOARD_SIZE)
 
-  def initialize(values : Array[(Int, Int)]) = {
+  def this (values : Array[(Int, Int)]) {
+    this
+
+    LOG.info ("board size = " + board.size)
+
+    for (i <- 0 until board.size) {
+      board(i) = new Checker(Constant.NONE_VALUE, i)
+    }
+
     values.map(it => {
-      if(it._1 < board.length) {
+      if(it._1 < board.size) {
         board(it._1) = new Checker(it._2, it._1)
       }
     })
   }
+
 
   def update() = {
     var updatedFlag = false
@@ -53,10 +59,16 @@ class ChessBoard {
   }
 
   private def print() = {
-    board.groupBy(it => it.getRowIndex).map(it => {
-      it._2.mkString(",")
-    }).foreach(LOG.info)
-    LOG.info("\n")
+
+    val sz = new StringBuilder
+    board.foreach(it => {
+      if(it.getColumnIndex % Constant.BOARD_SIZE == 0)
+        sz.append("\n").append(it.toString)
+      else sz.append(it.toString)
+    })
+
+    sz.append("\n")
+    LOG.info(sz)
   }
 
   private def getRow(rowIndex: Int) = {
