@@ -14,5 +14,7 @@ class ChessBoardSpec extends FlatSpec {
     
     chessBoard.process()
 
+
+
   }
 }
