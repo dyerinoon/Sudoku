@@ -6,6 +6,8 @@ package com.rover.sudoku
 
 import org.scalatest.FlatSpec
 
+import scala.collection.mutable.ArrayBuffer
+
 class CheckerSpec extends FlatSpec {
   // tests go here...
 

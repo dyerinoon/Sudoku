@@ -7,7 +7,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 class Checker(var value: Int, val index: Int) {
 
-  private val candidateValue  = ArrayBuffer(1, 2, 3, 4, 5, 6, 7, 8, 9)
+  val candidateValue  = ArrayBuffer(1, 2, 3, 4, 5, 6, 7, 8, 9)
   if (value != Constant.NONE_VALUE) {
     candidateValue.clear
   }

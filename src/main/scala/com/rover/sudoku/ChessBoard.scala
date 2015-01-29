@@ -46,8 +46,6 @@ class ChessBoard {
     while(update) {
 
     }
-
-
   }
 
   private def getRow(rowIndex: Int) = {
