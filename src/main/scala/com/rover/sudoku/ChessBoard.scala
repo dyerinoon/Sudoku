@@ -1,5 +1,7 @@
 package com.rover.sudoku
 
+import org.apache.log4j.Logger
+
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -7,58 +9,66 @@ import scala.collection.mutable.ArrayBuffer
  */
 class ChessBoard {
 
+  private val logger = Logger.getLogger(getClass.getName)
+
   private val board = new ArrayBuffer[Checker](Constant.BOARD_SIZE * Constant.BOARD_SIZE)
   for (i <- 0 until board.length) {
     board(i) = new Checker(Constant.NONE_VALUE, i)
   }
 
-  def initialize(values : Array[(Int, Int)]) = {
+  def initialize(values: Array[(Int, Int)]) = {
     values.map(it => {
-      if(it._1 < board.length) {
+      if (it._1 < board.length) {
         board(it._1) = new Checker(it._2, it._1)
       }
     })
   }
 
-  def update() = {
-    var updatedFlag = false
-    board.filter(it => !it.hasValue).foreach(it => {
-      val row = getRow(it.getRowIndex)
-      updatedFlag = updatedFlag || it.updateInGroup(row)
-
-      if (!it.hasValue) {
-        val col = getColumn(it.getColumnIndex)
-        updatedFlag = updatedFlag || it.updateInGroup(col)
-      }
-
-      if (!it.hasValue) {
-        val rect = getRect(it.getRectIndex)
-        updatedFlag = updatedFlag || it.updateInGroup(rect)
-      }
-
-      updatedFlag
+  def initialize(values: Array[Int]) = {
+    logger.info("initialize the chessboard, input values count = " + values.size)
+    board.clear
+    values.foreach(it => {
+      board += new Checker(it, board.size)
     })
-
-    updatedFlag
   }
 
-  def process() = {
-    while(update) {
-
+  def copyFrom = {
+    val copy = new ChessBoard
+    for (i <- 0 until board.length) {
+      board(i) = board(i).copyFrom()
     }
+
+    copy
   }
 
-  private def getRow(rowIndex: Int) = {
+  def getAll = { board }
+  def isAllValueBeSet() = {
+    board.filter(it => !it.hasValue).isEmpty
+  }
+  def isConflict = {
+    board.map(it => it.candidateValue.isEmpty && !it.hasValue).contains(true)
+  }
+
+  def getRow(rowIndex: Int) = {
     val startIndex = rowIndex * Constant.BOARD_SIZE
     board.slice(startIndex, startIndex + Constant.BOARD_SIZE)
   }
 
-  private def getColumn(columnIndex : Int) = {
+  def getColumn(columnIndex: Int) = {
     board.filter(it => it.getColumnIndex == columnIndex)
   }
 
-  private def getRect(rectIndex: Int) = {
+  def getRect(rectIndex: Int) = {
     board.filter(it => it.getRectIndex == rectIndex)
   }
 
+  override def toString = {
+    val sb = new StringBuilder
+    sb.append("\n")
+    for(i <-0 until Constant.BOARD_SIZE) {
+      sb.append(getRow(i).mkString(",")).append("\n")
+    }
+
+    sb.toString
+  }
 }
